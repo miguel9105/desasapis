@@ -13,6 +13,11 @@ return new class extends Migration
     {
         Schema::create('roles', function (Blueprint $table) {
             $table->id();
+            $table->string('role_name'); // Nombre del rol
+            $table->string('administrators'); // Cambiado a string
+            $table->string('community'); // Cambiado a string
+            $table->string('zone_community'); // Cambiado a string
+            $table->string('mail_administrator'); // Cambiado a string (sería mejor email si es un correo)
             $table->timestamps();
         });
     }
