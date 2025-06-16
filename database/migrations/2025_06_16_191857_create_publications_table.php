@@ -11,10 +11,19 @@ return new class extends Migration
      */
     public function up(): void
     {
+        // crea la tabla publications en la base de datos
         Schema::create('publications', function (Blueprint $table) {
-            $table->id();
-            $table->timestamps();
-        });
+        // crea una columna para cada atributo de la tabla
+        $table->id();
+        $table->foreignId('role_id')->constrained('roles')->onDelete('cascade');
+        $table->string('title');
+        $table->string('type');
+        $table->string('severity');
+        $table->string('location');
+        $table->text('description');
+        $table->string('image')->nullable();
+        $table->timestamps();
+    });
     }
 
     /**

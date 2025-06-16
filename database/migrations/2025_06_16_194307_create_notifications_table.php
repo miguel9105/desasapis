@@ -11,13 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('messages', function (Blueprint $table) {
+        Schema::create('notifications', function (Blueprint $table) {
             $table->id();
-            $table->text('content');
-            $table->boolean('is_admin_message')->default(false);
-            $table->boolean('is_read')->default(false);
-            $table->foreignId('role_id')->nullable()->constrained()->onDelete('cascade'); // Relación con roles
+            $table->string('event');
             $table->timestamps();
+            $table->foreignId('publication_id')->nullable()->constrained()->onDelete('cascade'); // Relación con publicacion
+
         });
     }
 
@@ -26,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('messages');
+        Schema::dropIfExists('notifications');
     }
 };

@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Publication;
-use App\Http\Requests\StorePublicationRequest;
-use App\Http\Requests\UpdatePublicationRequest;
+use App\Models\Notification;
+use App\Http\Requests\StoreNotificationRequest;
+use App\Http\Requests\UpdateNotificationRequest;
 
-class PublicationController extends Controller
+class NotificationController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -27,7 +27,7 @@ class PublicationController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StorePublicationRequest $request)
+    public function store(StoreNotificationRequest $request)
     {
         //
     }
@@ -35,7 +35,7 @@ class PublicationController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Publication $publication)
+    public function show(Notification $notification)
     {
         //
     }
@@ -43,7 +43,7 @@ class PublicationController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Publication $publication)
+    public function edit(Notification $notification)
     {
         //
     }
@@ -51,7 +51,7 @@ class PublicationController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdatePublicationRequest $request, Publication $publication)
+    public function update(UpdateNotificationRequest $request, Notification $notification)
     {
         //
     }
@@ -59,10 +59,8 @@ class PublicationController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Publication $publication)
+    public function destroy(Notification $notification)
     {
         //
     }
-
-    
 }
