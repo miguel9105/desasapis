@@ -19,8 +19,11 @@ class RouteServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-          $this->mapApiRoutes();
+
+        $this->mapApiRoutes();
     }
+
+
     protected function mapApiRoutes(): void
     {
         Route::prefix('v1')

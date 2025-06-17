@@ -3,64 +3,70 @@
 namespace App\Http\Controllers;
 
 use App\Models\Category;
-use App\Http\Requests\StoreCategoryRequest;
-use App\Http\Requests\UpdateCategoryRequest;
+
+use Illuminate\Http\Client\Request;
 
 class CategoryController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
+   public function index()
     {
-        //
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
+      // $category = Category::included()->findOrFail(2);
+        $categories=Category::included()->get();
+         // $categories=Category::included()->filter()->get();
+        return response()->json($categories);
     }
 
     /**
      * Store a newly created resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
      */
-    public function store(StoreCategoryRequest $request)
+    public function store(Request $request)
     {
-        //
+
+        $request->validate([
+            'name' => 'required|max:255',
+        ]);
+
+        $category = Category::create($request->all());
+
+        return response()->json($category);
     }
 
     /**
      * Display the specified resource.
+     *
+     * @param  \App\Models\Category  $category
+     * @return \Illuminate\Http\Response
      */
-    public function show(Category $category)
+    public function show($id) //si se pasa $id se utiliza la comentada
     {
-        //
+        $category = Category::findOrFail($id);
+        // $category = Category::with(['posts.user'])->findOrFail($id);
+        // $category = Category::with(['posts'])->findOrFail($id);
+        return response()->json($category);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Category $category)
+     public function update(Request $request, Category $category)
     {
-        //
+        $request->validate([
+            'name' => 'required|max:255',
+            'slug' => 'required|max:255|unique:categories,slug,'.$category->id,
+
+        ]);
+
+        $category->update($request->all());
+
+        return $category;
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(UpdateCategoryRequest $request, Category $category)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(Category $category)
     {
-        //
+        $category->delete();
+        return $category;
     }
+
+ 
+
 }
