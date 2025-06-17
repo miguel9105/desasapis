@@ -15,7 +15,7 @@ return new class extends Migration
         Schema::create('publications', function (Blueprint $table) {
         // crea una columna para cada atributo de la tabla
         $table->id();
-        $table->foreignId('role_id')->constrained('roles')->onDelete('cascade');
+        
         $table->string('title');
         $table->string('type');
         $table->string('severity');

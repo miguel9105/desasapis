@@ -22,6 +22,7 @@ class DatabaseSeeder extends Seeder
 
         $this->call([
         CategorySeeder::class,
+        PublicationSeeder::class,
         //se llaman los otros seeders
         ]);
     }
