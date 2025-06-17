@@ -13,7 +13,10 @@ class RoleController extends Controller
      */
     public function index()
     {
-        //
+     // $role = Role::included()->findOrFail(2);
+        $roles=Role::included()->get();
+         // $roles=Role::included()->filter()->get();
+        return response()->json($roles);
     }
 
     /**
@@ -29,15 +32,24 @@ class RoleController extends Controller
      */
     public function store(StoreRoleRequest $request)
     {
-        //
+         $request->validate([
+            'name' => 'required|max:255',
+        ]);
+
+        $role = Role::create($request->all());
+
+        return response()->json($role);
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(Role $role)
+    public function show($id)
     {
-        //
+    $role = Role::findOrFail($id);
+        // $role = Role::with(['posts.user'])->findOrFail($id);
+        // $role = Role::with(['posts'])->findOrFail($id);
+        return response()->json($role);
     }
 
     /**
@@ -53,7 +65,15 @@ class RoleController extends Controller
      */
     public function update(UpdateRoleRequest $request, Role $role)
     {
-        //
+        $request->validate([
+            'name' => 'required|max:255',
+            'slug' => 'required|max:255|unique:categories,slug,'.$role->id,
+
+        ]);
+
+        $role->update($request->all());
+
+        return $role;
     }
 
     /**
@@ -61,6 +81,7 @@ class RoleController extends Controller
      */
     public function destroy(Role $role)
     {
-        //
+        $role->delete();
+        return $role;
     }
 }
