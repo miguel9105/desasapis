@@ -4,10 +4,15 @@ use App\Http\Controllers\CategoryController;
 use Illuminate\Http\Request;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\RoleController;
 
 Route::get('/user', function (Request $request) {
     return $request->user();
 })->middleware('auth:sanctum');
+
+//Rutas de roles
+ Route::resource('roles',RoleController::class);
+
 
 Route::get('users', [UserController::class, 'index'])->name('api.v1.users.index');
 Route::post('users', [UserController::class, 'store'])->name('api.v1.users.store');
