@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('categories', function (Blueprint $table) {
             $table->id();
+            $table->string('name'); //nombre de la categoria
             $table->timestamps();
             $table->foreignId('publication_id')->nullable()->constrained()->onDelete('cascade'); // Relación con publicacion
         });
