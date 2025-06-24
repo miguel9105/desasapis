@@ -3,66 +3,62 @@
 namespace App\Http\Controllers;
 
 use App\Models\Publication;
-use App\Http\Requests\StorePublicationRequest;
-use App\Http\Requests\UpdatePublicationRequest;
+use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 
 class PublicationController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
+    // Obtener todas las publicaciones, con relaciones incluidas y filtros
     public function index()
     {
-        //
+        $publications = Publication::included()->filter()->get();
+        return response()->json($publications);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
+    // Crear nueva publicación
+    public function store(Request $request)
     {
-        //
+        $request->validate([
+            'title' => 'required|max:255',
+            'content' => 'required',
+            'description' => 'required',
+        ]);
+
+        $data = $request->all();
+        $data['slug'] = Str::slug($data['title']);
+
+        $publication = Publication::create($data);
+
+        return response()->json($publication, 201);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(StorePublicationRequest $request)
+    // Mostrar publicación individual con relaciones incluidas
+    public function show($id)
     {
-        //
+        $publication = Publication::included()->findOrFail($id);
+        return response()->json($publication);
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(Publication $publication)
+    // Actualizar publicación
+    public function update(Request $request, Publication $publication)
     {
-        //
+        $request->validate([
+            'title' => 'required|max:255',
+            'content' => 'required',
+            'description' => 'required',
+            'slug' => 'required|max:255|unique:publications,slug,' . $publication->id,
+        ]);
+
+        $publication->update($request->all());
+
+        return response()->json($publication);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Publication $publication)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(UpdatePublicationRequest $request, Publication $publication)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
+    // Eliminar publicación
     public function destroy(Publication $publication)
     {
-        //
-    }
+        $publication->delete();
 
-    
+        return response()->json(['message' => 'Publicación eliminada correctamente.']);
+    }
 }
