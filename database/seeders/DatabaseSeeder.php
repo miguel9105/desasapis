@@ -24,7 +24,7 @@ class DatabaseSeeder extends Seeder
         PublicationSeeder::class,
         UserSeeder::class,
          RoleSeeder::class,
-        //se llaman los otros seeders
+        MessageSeeder::class
         ]);
 
     }
