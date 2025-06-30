@@ -13,9 +13,8 @@ class UserController extends Controller
     {
       // $category = Category::included()->findOrFail(2);
         $users=User::included()->get();
-          //$categories=Category::included()->filter()->get();
+         // $categories=Category::included()->filter()->get();
         return response()->json($users);
-        
     }
 
     /**
@@ -24,7 +23,6 @@ class UserController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-  
     public function store(Request $request)
     {
 
@@ -36,10 +34,15 @@ class UserController extends Controller
 
         $user = User::create($request->all());
 
-        return response()->json($users);
+        return response()->json($user);
     }
 
-   
+    /**
+     * Display the specified resource.
+     *
+     * @param  \App\Models\User  $category
+     * @return \Illuminate\Http\Response
+     */
     public function show($id) //si se pasa $id se utiliza la comentada
     {
         $user = User::findOrFail($id);
@@ -52,7 +55,8 @@ class UserController extends Controller
     {
         $request->validate([
             'name' => 'required|max:255',
-            'slug' => 'required|max:255|unique:categories,slug,'.$user->id,
+            'email' => 'required|max:255'.$user->id,
+            'password' => 'required|max:255'.$user->id,
 
         ]);
 
@@ -66,5 +70,6 @@ class UserController extends Controller
         $user->delete();
         return $user;
     }
+
 }
 

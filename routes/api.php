@@ -5,16 +5,19 @@ use App\Http\Controllers\MessageController;
 use App\Http\Controllers\PublicationController;
 use Illuminate\Http\Request;
 use App\Http\Controllers\UserController;
-use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\RoleController;
+use Illuminate\Support\Facades\Route;
+
+
 
 Route::get('/user', function (Request $request) {
     return $request->user();
 })->middleware('auth:sanctum');
 
 //Rutas de roles
- Route::resource('roles',RoleController::class);
-
+ Route::get('roles', [RoleController::class, 'index'])->name('api.v1.roles.index');
+Route::post('roles', [RoleController::class, 'store'])->name('api.v1.roles.store');
+Route::get('roles/{role}', [RoleController::class, 'show'])->name('api.v1.roles.show');
 
 Route::get('users', [UserController::class, 'index'])->name('api.v1.users.index');
 Route::post('users', [UserController::class, 'store'])->name('api.v1.users.store');
