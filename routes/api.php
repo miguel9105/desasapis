@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\MessageController;
 use App\Http\Controllers\PublicationController;
 use Illuminate\Http\Request;
 use App\Http\Controllers\UserController;
@@ -27,4 +28,5 @@ Route::get('users/{user}', [UserController::class, 'show'])->name('api.v1.users.
 
  // Publications routes
 Route::Resource('publications', PublicationController::class)->names('api.v1.publications');
+ Route::resource('messages',MessageController::class);
 

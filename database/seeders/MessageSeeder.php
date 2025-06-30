@@ -2,16 +2,19 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
 
 class MessageSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
     public function run(): void
     {
-        //
+        DB::table('messages')->insert([
+            ['content' => 'Hola, bienvenido al sistema.', 'is_admin_message' => 1, 'is_read' => 0],
+            ['content' => 'Gracias por su mensaje.', 'is_admin_message' => 0, 'is_read' => 1],
+            ['content' => '¿Cómo podemos ayudarte hoy?', 'is_admin_message' => 1, 'is_read' => 0],
+            ['content' => 'Tu solicitud ha sido recibida.', 'is_admin_message' => 0, 'is_read' => 0],
+            ['content' => 'Estamos revisando tu caso.', 'is_admin_message' => 1, 'is_read' => 1],
+        ]);
     }
 }
