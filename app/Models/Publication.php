@@ -11,15 +11,29 @@ class Publication extends Model
     use HasFactory;
 
     protected $fillable = [
-        'title',
-        'content',
-        'description',
-        'slug'
+        'title_publication',
+        'type_publication',
+        'severity_publication',
+        'location_publication',
+        'description_publication',
+        'url_imagen',
+        'role_id'
     ];
 
     // LISTAS BLANCAS
-    protected $allowIncluded = ['categories', 'categories.user'];
-    protected $allowFilter = ['id', 'title', 'description'];
+    protected $allowIncluded = [
+        'categories', 
+        'categories.user', 
+        'role'
+    ];
+
+    protected $allowFilter = [
+        'id',
+        'title_publication',
+        'severity_publication',
+        'type_publication',
+        'location_publication'
+    ];
 
     // Relaciones
     public function categories()
@@ -27,9 +41,9 @@ class Publication extends Model
         return $this->belongsToMany(Category::class);
     }
 
-    public function rol()
+    public function role()
     {
-        return $this->belongsTo(Role::class);
+      return $this->belongsTo(Role::class);
     }
 
     public function notification()
@@ -37,11 +51,10 @@ class Publication extends Model
         return $this->belongsToMany(Notification::class);
     }
 
-    // Scope para incluir relaciones dinámicamente desde la URL: ?included=categories,...
     public function scopeIncluded(Builder $query)
     {
         if (empty($this->allowIncluded) || empty(request('included'))) {
-            return;
+            return $query; // ← Asegúrate de retornar el query
         }
 
         $relations = explode(',', request('included'));
@@ -53,7 +66,7 @@ class Publication extends Model
             }
         }
 
-        $query->with($relations);
+        return $query->with($relations);
     }
 
     // Scope para aplicar filtros: ?filter[title]=Alerta

@@ -30,6 +30,7 @@ Route::get('users/{user}', [UserController::class, 'show'])->name('api.v1.users.
 
 
  // Publications routes
-Route::Resource('publications', PublicationController::class)->names('api.v1.publications');
- Route::resource('messages',MessageController::class);
+Route::get('publications', [PublicationController::class, 'index'])->name('api.v1.publications.index');
+Route::post('publications', [PublicationController::class, 'store'])->name('api.v1.publications.store');
+Route::get('publications/{publication}', [PublicationController::class, 'show'])->name('api.v1.publications.show');
 
