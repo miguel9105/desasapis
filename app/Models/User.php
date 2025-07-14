@@ -1,5 +1,6 @@
 <?php
 
+
 // Definimos el espacio de nombres del modelo
 namespace App\Models;
 
@@ -95,5 +96,3 @@ class User extends Model
                 $query->where($filter, 'LIKE', '%' . $value . '%');
             }
         }
-    }
-}
