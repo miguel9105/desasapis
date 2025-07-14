@@ -4,7 +4,10 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
-
+/**
+ * Seeder para poblar la tabla 'messages' con datos de ejemplo.
+ * Útil para pruebas del sistema de mensajería (chat).
+ */
 class MessageSeeder extends Seeder
 {
     public function run(): void

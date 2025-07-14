@@ -1,91 +1,98 @@
 <?php
 
-namespace App\Http\Controllers;
 
-// Importación del modelo User
-use App\Models\User;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Validation\ValidationException;
+// Definimos el espacio de nombres del modelo
+namespace App\Models;
 
-class UserController extends Controller
+// Importamos clases necesarias de Eloquent
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+
+// Definimos la clase User que extiende del modelo Eloquent
+class User extends Model
 {
-    // Método para obtener todos los usuarios
-    public function index()
+    // Lista de atributos que se pueden asignar masivamente
+    protected $fillable = [
+        'name',
+        'email',
+        'password',
+    ];
+
+    // Atributos que se ocultarán al serializar el modelo (por ejemplo, al devolver en JSON)
+    protected $hidden = [
+        'password',
+        'remember_token',
+    ];
+
+    // Definimos los tipos de datos que deben ser convertidos automáticamente
+    protected function casts(): array
     {
-        // Obtiene los usuarios con relaciones incluidas (según la lógica definida en el modelo)
-        $users=User::included()->get();
-
-        // Aplica filtros personalizados definidos en el modelo y obtiene nuevamente los usuarios
-        $users=User::included()->filter()->get();
-
-        // Devuelve los usuarios en formato JSON
-        return response()->json($users);
+        return [
+            'email_verified_at' => 'datetime', // Convierte a tipo fecha
+            'password' => 'hashed', // Aplica hashing automático al password
+        ];
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    // Método para crear un nuevo usuario
-    public function store(Request $request)
+    // Relación muchos a muchos con el modelo Role
+    public function roles()
     {
-        // Validación de campos requeridos para crear el usuario
-        $request->validate([
-            'name' => 'required|max:255',
-            'email' => 'required|max:255',
-            'password' => 'required|max:255',
-        ]);
-
-        // Crea un nuevo usuario con los datos del request
-        $user = User::create($request->all());
-
-        // Retorna el usuario creado en formato JSON
-        return response()->json($user);
+        return $this->belongsToMany(Role::class);
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\User  $category
-     * @return \Illuminate\Http\Response
-     */
-    // Método para mostrar un usuario específico por su ID
-    public function show($id) //si se pasa $id se utiliza la comentada
-    {
-        // Busca el usuario por ID; si no existe, lanza un error 404
-        $user = User::findOrFail($id);
+    // Lista blanca: relaciones permitidas para incluir en consultas (ej. con ?included=rol)
+    protected $allowIncluded = ['rol', 'rol.user'];
 
-        // Retorna el usuario encontrado en formato JSON
-        return response()->json($user);
+    // Lista blanca: filtros permitidos en consultas (ej. ?filter[name]=Adriana)
+    protected $allowFilter = ['id', 'name'];
+
+    // Habilitamos la factoría para pruebas y seeders
+    /** @use HasFactory<\Database\Factories\CategoryFactory> */
+    use HasFactory;
+
+    // Scope para incluir relaciones dinámicamente si están permitidas
+    public function scopeIncluded(Builder $query)
+    {
+        // Verificamos que exista la lista blanca y el parámetro included en la URL
+        if (empty($this->allowIncluded) || empty(request('included'))) {
+            return;
+        }
+
+        // Obtenemos y separamos las relaciones solicitadas en el parámetro included
+        $relations = explode(',', request('included'));
+
+        // Convertimos la lista blanca a colección para poder usar métodos de Laravel
+        $allowIncluded = collect($this->allowIncluded);
+
+        // Recorremos las relaciones solicitadas y eliminamos las no permitidas
+        foreach ($relations as $key => $relationship) {
+            if (!$allowIncluded->contains($relationship)) {
+                unset($relations[$key]);
+            }
+        }
+
+        // Aplicamos las relaciones válidas al query
+        $query->with($relations);
     }
 
-    // Método para actualizar un usuario existente
-    public function update(Request $request, User $user)
+    // Scope para aplicar filtros a la consulta según la lista blanca
+    public function scopeFilter(Builder $query)
     {
-        // Validación de campos requeridos para la actualización
-        $request->validate([
-            'name' => 'required|max:255',
-            'email' => 'required|max:255'.$user->id,
-            'password' => 'required|max:255'.$user->id,
-        ]);
+        // Verificamos que existan filtros permitidos y que se haya enviado el parámetro filter
+        if (empty($this->allowFilter) || empty(request('filter'))) {
+            return;
+        }
 
-        // Actualiza el usuario con los datos del request
-        $user->update($request->all());
+        // Obtenemos los filtros desde la petición
+        $filters = request('filter');
 
-        // Retorna el usuario actualizado
-        return $user;
-    }
+        // Convertimos la lista blanca de filtros en una colección
+        $allowFilter = collect($this->allowFilter);
 
-    // Método para eliminar un usuario
-    public function destroy(User $user)
-    {
-        // Elimina el usuario de la base de datos
-        $user->delete();
-
-        // Retorna el usuario eliminado
-        return $user;
-    }
-}
+        // Recorremos los filtros y aplicamos los que estén permitidos
+        foreach ($filters as $filter => $value) {
+            if ($allowFilter->contains($filter)) {
+                // Aplicamos el filtro con un LIKE para coincidencias parciales
+                $query->where($filter, 'LIKE', '%' . $value . '%');
+            }
+        }
