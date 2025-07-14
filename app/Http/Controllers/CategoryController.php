@@ -22,6 +22,7 @@ class CategoryController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
+    // crear categoria
     public function store(Request $request)
     {
 
@@ -40,6 +41,7 @@ class CategoryController extends Controller
      * @param  \App\Models\Category  $category
      * @return \Illuminate\Http\Response
      */
+    // buscar por id la categpria
     public function show($id) //si se pasa $id se utiliza la comentada
     {
         $category = Category::findOrFail($id);
@@ -47,7 +49,7 @@ class CategoryController extends Controller
         // $category = Category::with(['posts'])->findOrFail($id);
         return response()->json($category);
     }
-
+    // actualizacionde la categoria
      public function update(Request $request, Category $category)
     {
         $request->validate([
@@ -60,7 +62,7 @@ class CategoryController extends Controller
 
         return $category;
     }
-
+// eliminacion de la ategoria
     public function destroy(Category $category)
     {
         $category->delete();
