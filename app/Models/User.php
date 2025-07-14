@@ -1,96 +1,99 @@
 <?php
 
+// Definimos el espacio de nombres del modelo
 namespace App\Models;
+
+// Importamos clases necesarias de Eloquent
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
+// Definimos la clase User que extiende del modelo Eloquent
 class User extends Model
 {
-   
-   
+    // Lista de atributos que se pueden asignar masivamente
     protected $fillable = [
         'name',
         'email',
         'password',
     ];
 
-    
+    // Atributos que se ocultarán al serializar el modelo (por ejemplo, al devolver en JSON)
     protected $hidden = [
         'password',
         'remember_token',
     ];
 
-    
+    // Definimos los tipos de datos que deben ser convertidos automáticamente
     protected function casts(): array
     {
         return [
-            'email_verified_at' => 'datetime',
-            'password' => 'hashed',
+            'email_verified_at' => 'datetime', // Convierte a tipo fecha
+            'password' => 'hashed', // Aplica hashing automático al password
         ];
     }
 
-
-     public function roles()
+    // Relación muchos a muchos con el modelo Role
+    public function roles()
     {
-        return $this->belongsToMany(Role::class );
+        return $this->belongsToMany(Role::class);
     }
 
+    // Lista blanca: relaciones permitidas para incluir en consultas (ej. con ?included=rol)
+    protected $allowIncluded = ['rol', 'rol.user'];
 
-    //LISTAS BLANCAS
-    protected $allowIncluded = ['rol', 'rol.user']; //las posibles Querys que se pueden realizar
+    // Lista blanca: filtros permitidos en consultas (ej. ?filter[name]=Adriana)
     protected $allowFilter = ['id', 'name'];
 
+    // Habilitamos la factoría para pruebas y seeders
     /** @use HasFactory<\Database\Factories\CategoryFactory> */
     use HasFactory;
 
-
+    // Scope para incluir relaciones dinámicamente si están permitidas
     public function scopeIncluded(Builder $query)
     {
-        if (empty($this->allowIncluded) || empty(request('included'))) { // validamos que la lista blanca y la variable included enviada a travez de HTTP no este en vacia.
+        // Verificamos que exista la lista blanca y el parámetro included en la URL
+        if (empty($this->allowIncluded) || empty(request('included'))) {
             return;
         }
 
-        $relations = explode(',', request('included')); //['posts','relation2']//recuperamos el valor de la variable included y separa sus valores por una coma
+        // Obtenemos y separamos las relaciones solicitadas en el parámetro included
+        $relations = explode(',', request('included'));
 
-        //return $relations;
+        // Convertimos la lista blanca a colección para poder usar métodos de Laravel
+        $allowIncluded = collect($this->allowIncluded);
 
-
-        $allowIncluded = collect($this->allowIncluded); //colocamos en una colecion lo que tiene $allowIncluded en este caso = ['posts','posts.user']
-
-        foreach ($relations as $key => $relationship) { //recorremos el array de relaciones
-
+        // Recorremos las relaciones solicitadas y eliminamos las no permitidas
+        foreach ($relations as $key => $relationship) {
             if (!$allowIncluded->contains($relationship)) {
                 unset($relations[$key]);
             }
         }
 
-       // return $relations;
-
-        $query->with($relations); //se ejecuta el query con lo que tiene $relations en ultimas es el valor en la url de included
-
+        // Aplicamos las relaciones válidas al query
+        $query->with($relations);
     }
 
+    // Scope para aplicar filtros a la consulta según la lista blanca
     public function scopeFilter(Builder $query)
     {
-
+        // Verificamos que existan filtros permitidos y que se haya enviado el parámetro filter
         if (empty($this->allowFilter) || empty(request('filter'))) {
             return;
         }
 
+        // Obtenemos los filtros desde la petición
         $filters = request('filter');
 
+        // Convertimos la lista blanca de filtros en una colección
         $allowFilter = collect($this->allowFilter);
 
+        // Recorremos los filtros y aplicamos los que estén permitidos
         foreach ($filters as $filter => $value) {
-
             if ($allowFilter->contains($filter)) {
-
-                $query->where($filter, 'LIKE', '%' . $value . '%');//nos retorna todos los registros que conincidad, asi sea en una porcion del texto
+                // Aplicamos el filtro con un LIKE para coincidencias parciales
+                $query->where($filter, 'LIKE', '%' . $value . '%');
             }
         }
-
-
-
     }
 }
