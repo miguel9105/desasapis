@@ -10,6 +10,7 @@ class Publication extends Model
 {
     use HasFactory;
 
+    // campos que se pueden asignar masivamente
     protected $fillable = [
         'title_publication',
         'type_publication',
@@ -20,13 +21,14 @@ class Publication extends Model
         'role_id'
     ];
 
-    // LISTAS BLANCAS
+    // relaciones permitidas para incluir en consultas
     protected $allowIncluded = [
         'categories', 
         'categories.user', 
         'role'
     ];
 
+    // campos permitidos para filtrar
     protected $allowFilter = [
         'id',
         'title_publication',
@@ -35,26 +37,29 @@ class Publication extends Model
         'location_publication'
     ];
 
-    // Relaciones
+    // relacion muchos a muchos con categorias
     public function categories()
     {
         return $this->belongsToMany(Category::class);
     }
 
+    // relacion muchos a uno con roles
     public function role()
     {
       return $this->belongsTo(Role::class);
     }
 
+    // relacion muchos a muchos con notificaciones
     public function notification()
     {
         return $this->belongsToMany(Notification::class);
     }
 
+    // scope para incluir relaciones permitidas en la consulta
     public function scopeIncluded(Builder $query)
     {
         if (empty($this->allowIncluded) || empty(request('included'))) {
-            return $query; // ← Asegúrate de retornar el query
+            return $query;
         }
 
         $relations = explode(',', request('included'));
@@ -69,7 +74,7 @@ class Publication extends Model
         return $query->with($relations);
     }
 
-    // Scope para aplicar filtros: ?filter[title]=Alerta
+    // scope para filtrar por campos permitidos
     public function scopeFilter(Builder $query)
     {
         if (empty($this->allowFilter) || empty(request('filter'))) {

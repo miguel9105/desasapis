@@ -7,16 +7,18 @@ use App\Models\Publication;
 
 class PublicationController extends Controller
 {
+    // metodo para listar todas las publicaciones
     public function index()
     {
-        // Muestra con relaciones incluidas (ejemplo: role o categorías si las agregas)
+        // obtiene todas las publicaciones incluyendo relaciones si el metodo included esta definido
         $publications = Publication::included()->get();
-        // $publications = Publication::included()->filter()->get();
         return response()->json($publications);
     }
 
+    // metodo para crear una nueva publicacion
     public function store(Request $request)
     {
+        // valida los datos recibidos
         $request->validate([
             'title_publication' => 'required|string|max:255',
             'type_publication' => 'required|string|max:255',
@@ -27,19 +29,23 @@ class PublicationController extends Controller
             'url_imagen' => 'nullable|string|max:255',
         ]);
 
+        // crea la publicacion
         $publication = Publication::create($request->all());
         return response()->json($publication, 201);
     }
 
+    // metodo para mostrar una publicacion por id
     public function show($id)
     {
+        // busca la publicacion o lanza excepcion si no existe
         $publication = Publication::findOrFail($id);
-        // $publication = Publication::with(['role'])->findOrFail($id); // si tienes relaciones
         return response()->json($publication);
     }
 
+    // metodo para actualizar una publicacion existente
     public function update(Request $request, Publication $publication)
     {
+        // valida los datos recibidos si estan presentes
         $request->validate([
             'title_publication' => 'sometimes|required|string|max:255',
             'type_publication' => 'sometimes|required|string|max:255',
@@ -50,13 +56,15 @@ class PublicationController extends Controller
             'url_imagen' => 'nullable|string|max:255',
         ]);
 
+        // actualiza la publicacion
         $publication->update($request->all());
         return response()->json($publication);
     }
 
+    // metodo para eliminar una publicacion
     public function destroy(Publication $publication)
     {
         $publication->delete();
-        return response()->json(['message' => 'Publicación eliminada correctamente.']);
+        return response()->json(['message' => 'publicacion eliminada correctamente']);
     }
 }
