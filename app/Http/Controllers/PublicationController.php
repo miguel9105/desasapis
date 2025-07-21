@@ -2,63 +2,69 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Publication;
 use Illuminate\Http\Request;
-use Illuminate\Support\Str;
+use App\Models\Publication;
 
 class PublicationController extends Controller
 {
-    // Obtener todas las publicaciones, con relaciones incluidas y filtros
+    // metodo para listar todas las publicaciones
     public function index()
     {
-        $publications = Publication::included()->filter()->get();
+        // obtiene todas las publicaciones incluyendo relaciones si el metodo included esta definido
+        $publications = Publication::included()->get();
         return response()->json($publications);
     }
 
-    // Crear nueva publicación
+    // metodo para crear una nueva publicacion
     public function store(Request $request)
     {
+        // valida los datos recibidos
         $request->validate([
-            'title' => 'required|max:255',
-            'content' => 'required',
-            'description' => 'required',
+            'title_publication' => 'required|string|max:255',
+            'type_publication' => 'required|string|max:255',
+            'severity_publication' => 'required|string|max:255',
+            'location_publication' => 'required|string|max:255',
+            'description_publication' => 'required|string',
+            'role_id' => 'required|exists:roles,id',
+            'url_imagen' => 'nullable|string|max:255',
         ]);
 
-        $data = $request->all();
-        $data['slug'] = Str::slug($data['title']);
-
-        $publication = Publication::create($data);
-
+        // crea la publicacion
+        $publication = Publication::create($request->all());
         return response()->json($publication, 201);
     }
 
-    // Mostrar publicación individual con relaciones incluidas
+    // metodo para mostrar una publicacion por id
     public function show($id)
     {
-        $publication = Publication::included()->findOrFail($id);
+        // busca la publicacion o lanza excepcion si no existe
+        $publication = Publication::findOrFail($id);
         return response()->json($publication);
     }
 
-    // Actualizar publicación
+    // metodo para actualizar una publicacion existente
     public function update(Request $request, Publication $publication)
     {
+        // valida los datos recibidos si estan presentes
         $request->validate([
-            'title' => 'required|max:255',
-            'content' => 'required',
-            'description' => 'required',
-            'slug' => 'required|max:255|unique:publications,slug,' . $publication->id,
+            'title_publication' => 'sometimes|required|string|max:255',
+            'type_publication' => 'sometimes|required|string|max:255',
+            'severity_publication' => 'sometimes|required|string|max:255',
+            'location_publication' => 'sometimes|required|string|max:255',
+            'description_publication' => 'sometimes|required|string',
+            'role_id' => 'sometimes|required|exists:roles,id',
+            'url_imagen' => 'nullable|string|max:255',
         ]);
 
+        // actualiza la publicacion
         $publication->update($request->all());
-
         return response()->json($publication);
     }
 
-    // Eliminar publicación
+    // metodo para eliminar una publicacion
     public function destroy(Publication $publication)
     {
         $publication->delete();
-
-        return response()->json(['message' => 'Publicación eliminada correctamente.']);
+        return response()->json(['message' => 'publicacion eliminada correctamente']);
     }
 }

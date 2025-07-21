@@ -15,7 +15,13 @@ Route::get('/user', function (Request $request) {
     return $request->user();
 })->middleware('auth:sanctum');
 
-//Rutas de roles
+
+
+ // Publications routes
+Route::get('publications', [PublicationController::class, 'index'])->name('api.v1.publications.index');
+Route::post('publications', [PublicationController::class, 'store'])->name('api.v1.publications.store');
+Route::get('publications/{publication}', [PublicationController::class, 'show'])->name('api.v1.publications.show');
+=======
 Route::get('roles', [RoleController::class, 'index'])->name('api.v1.roles.index');// Obtener todos los roles
 Route::post('roles', [RoleController::class, 'store'])->name('api.v1.roles.store');// Crear un nuevo rol
 Route::get('roles/{role}', [RoleController::class, 'show'])->name('api.v1.roles.show');// Obtener un rol específico
@@ -30,7 +36,5 @@ Route::get('categories', [CategoryController::class,'index'])->name('api.v1.cate
 Route::post('categories', [CategoryController::class,'store'])->name('api.v1.categories.store');// Crear una nueva categoría
 Route::get('categories/{category}', [CategoryController::class,'show'])->name('api.v1.categories.show');// Obtener una categoría específica
 
-// Rutas de publicaciones
-Route::Resource('publications', PublicationController::class)->names('api.v1.publications');// Rutas RESTful para publicaciones
-Route::resource('messages',MessageController::class);// Rutas RESTful para mensajes
+
 

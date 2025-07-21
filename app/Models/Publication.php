@@ -10,38 +10,56 @@ class Publication extends Model
 {
     use HasFactory;
 
+    // campos que se pueden asignar masivamente
     protected $fillable = [
-        'title',
-        'content',
-        'description',
-        'slug'
+        'title_publication',
+        'type_publication',
+        'severity_publication',
+        'location_publication',
+        'description_publication',
+        'url_imagen',
+        'role_id'
     ];
 
-    // LISTAS BLANCAS
-    protected $allowIncluded = ['categories', 'categories.user'];
-    protected $allowFilter = ['id', 'title', 'description'];
+    // relaciones permitidas para incluir en consultas
+    protected $allowIncluded = [
+        'categories', 
+        'categories.user', 
+        'role'
+    ];
 
-    // Relaciones
+    // campos permitidos para filtrar
+    protected $allowFilter = [
+        'id',
+        'title_publication',
+        'severity_publication',
+        'type_publication',
+        'location_publication'
+    ];
+
+    // relacion muchos a muchos con categorias
     public function categories()
     {
         return $this->belongsToMany(Category::class);
     }
 
-    public function rol()
+    // relacion muchos a uno con roles
+    public function role()
     {
-        return $this->belongsTo(Role::class);
+      return $this->belongsTo(Role::class);
     }
 
+    // relacion muchos a muchos con notificaciones
     public function notification()
     {
         return $this->belongsToMany(Notification::class);
     }
 
-    // Scope para incluir relaciones dinámicamente desde la URL: ?included=categories,...
+    // scope para incluir relaciones permitidas en la consulta
     public function scopeIncluded(Builder $query)
     {
         if (empty($this->allowIncluded) || empty(request('included'))) {
-            return;
+            return $query;
         }
 
         $relations = explode(',', request('included'));
@@ -53,10 +71,10 @@ class Publication extends Model
             }
         }
 
-        $query->with($relations);
+        return $query->with($relations);
     }
 
-    // Scope para aplicar filtros: ?filter[title]=Alerta
+    // scope para filtrar por campos permitidos
     public function scopeFilter(Builder $query)
     {
         if (empty($this->allowFilter) || empty(request('filter'))) {
