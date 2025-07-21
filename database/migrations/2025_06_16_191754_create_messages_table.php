@@ -16,6 +16,8 @@ return new class extends Migration
             $table->text('content');
             $table->boolean('is_admin_message')->default(false);
             $table->boolean('is_read')->default(false);
+             // Relación con la tabla 'roles'
+            // Si se elimina el rol, también se eliminan sus mensajes
             $table->foreignId('role_id')->nullable()->constrained()->onDelete('cascade'); // Relación con roles
             $table->timestamps();
         });

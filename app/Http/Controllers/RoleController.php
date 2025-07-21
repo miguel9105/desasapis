@@ -9,80 +9,37 @@ use Illuminate\Support\Facades\Request;
 
 class RoleController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
+ // obtiene todos los roles aplicando included y filter si vienen en la peticion
     public function index()
     {
-     // $role = Role::included()->findOrFail(2);
-        $roles=Role::included()->get();
-         // $roles=Role::included()->filter()->get();
+        $roles = Role::included()->filter()->get();
         return response()->json($roles);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
+// crea un nuevo rol con el campo name
     public function store(Request $request)
     {
-         $request->validate([
-            'name' => 'required|max:255',
-        ]);
-
-        $role = Role::create($request->all());
-
-        return response()->json($role);
+        $role = Role::create($request->only(['name']));
+        return response()->json($role, 201);
     }
 
-    /**
-     * Display the specified resource.
-     */
+    // muestra un rol especifico por su id
     public function show($id)
     {
-    $role = Role::findOrFail($id);
-        // $role = Role::with(['posts.user'])->findOrFail($id);
-        // $role = Role::with(['posts'])->findOrFail($id);
+        $role = Role::findOrFail($id);
         return response()->json($role);
     }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Role $role)
+// actualiza el nombre de un rol existente
+    public function update(Request $request, $id)
     {
-        //
+        $role = Role::findOrFail($id);
+        $role->update($request->only(['name']));
+        return response()->json($role);
     }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, Role $role)
+    // elimina un rol por su id
+    public function destroy($id)
     {
-        $request->validate([
-            'name' => 'required|max:255',
-            'slug' => 'required|max:255|unique:categories,slug,'.$role->id,
-
-        ]);
-
-        $role->update($request->all());
-
-        return $role;
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Role $role)
-    {
-        $role->delete();
-        return $role;
+        Role::destroy($id);
+        return response()->json(['message' => 'Rol eliminado correctamente']);
     }
 }
