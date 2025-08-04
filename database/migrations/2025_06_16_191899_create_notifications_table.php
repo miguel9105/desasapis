@@ -13,10 +13,11 @@ return new class extends Migration
     {
         Schema::create('notifications', function (Blueprint $table) {
             $table->id();
-            $table->string('event');
+            $table->string('event_notification');
             $table->timestamps();
-            $table->foreignId('publication_id')->nullable()->constrained()->onDelete('cascade'); // Relación con publicacion
-
+            // Relación con publicacion
+            $table->unsignedBigInteger('publication_id');
+            $table->foreign('publication_id')->references('id')->on('publications')->onDelete('cascade');
         });
     }
 

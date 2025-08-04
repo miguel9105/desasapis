@@ -21,10 +21,10 @@ return new class extends Migration
         $table->string('url_imagen')->nullable();
 
         // Clave foranea correcta
-        $table->unsignedBigInteger('role_id');
-        $table->foreign('role_id')->references('id')->on('roles')->onDelete('cascade');
-
+        $table->unsignedBigInteger('profile_id');
+        $table->foreign('profile_id')->references('id')->on('profiles')->onDelete('cascade');
         $table->timestamps();
+            
     });
     }
 

@@ -14,12 +14,15 @@ return new class extends Migration
         Schema::create('messages', function (Blueprint $table) {
             $table->id();
             $table->text('content');
-            $table->boolean('is_admin_message')->default(false);
-            $table->boolean('is_read')->default(false);
-             // Relación con la tabla 'roles'
-            // Si se elimina el rol, también se eliminan sus mensajes
-            $table->foreignId('role_id')->nullable()->constrained()->onDelete('cascade'); // Relación con roles
+            $table->text('is_read');
+            $table->text('sender_profile_id');
+            $table->text('receiver_profile_id');
             $table->timestamps();
+             // Relación con la tabla 'profile'
+            $table->unsignedBigInteger('profile_id');
+            $table->foreign('profile_id')->references('id')->on('profiles')->onDelete('cascade');
+            
+            
         });
     }
 

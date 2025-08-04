@@ -13,9 +13,15 @@ return new class extends Migration
     {
         Schema::create('publications_categories', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('publication_id')->constrained('publications')->onDelete('cascade');
-            $table->foreignId('category_id')->constrained('categories')->onDelete('cascade');
             $table->timestamps();
+
+            // Relación con publicacion
+            $table->unsignedBigInteger('publication_id');
+            $table->foreign('publication_id')->references('id')->on('publications')->onDelete('cascade');
+
+            // Relación con categories
+            $table->unsignedBigInteger('category_id');
+            $table->foreign('category_id')->references('id')->on('categories')->onDelete('cascade');
         });
     }
 

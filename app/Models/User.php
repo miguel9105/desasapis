@@ -96,5 +96,4 @@ class User extends Model
                 $query->where($filter, 'LIKE', '%' . $value . '%');
             }
         }
-    }
-}
+    }}

@@ -15,7 +15,10 @@ return new class extends Migration
         Schema::create('users', function (Blueprint $table) {
             $table->id(); // Llave primaria autoincremental
             $table->string('name'); // Nombre del usuario
+            $table->string('lastname'); // apellido del usuario
             $table->string('email')->unique(); // Correo electrónico único
+            $table->string('location'); // ubicacion del usuario}
+            
             $table->timestamp('email_verified_at')->nullable(); // Fecha de verificación del correo
             $table->string('password'); // Contraseña del usuario
             $table->rememberToken(); // Token para mantener la sesión iniciada
@@ -37,6 +40,7 @@ return new class extends Migration
             $table->text('user_agent')->nullable(); // Información del navegador o dispositivo
             $table->longText('payload'); // Información serializada de la sesión
             $table->integer('last_activity')->index(); // Última actividad (timestamp)
+            
         });
     }
 

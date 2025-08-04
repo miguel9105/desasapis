@@ -21,7 +21,7 @@ Route::get('/user', function (Request $request) {
 Route::get('publications', [PublicationController::class, 'index'])->name('api.v1.publications.index');
 Route::post('publications', [PublicationController::class, 'store'])->name('api.v1.publications.store');
 Route::get('publications/{publication}', [PublicationController::class, 'show'])->name('api.v1.publications.show');
-=======
+
 Route::get('roles', [RoleController::class, 'index'])->name('api.v1.roles.index');// Obtener todos los roles
 Route::post('roles', [RoleController::class, 'store'])->name('api.v1.roles.store');// Crear un nuevo rol
 Route::get('roles/{role}', [RoleController::class, 'show'])->name('api.v1.roles.show');// Obtener un rol específico

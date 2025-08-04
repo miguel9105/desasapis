@@ -13,7 +13,7 @@ class UserController extends Controller
     public function index()
     {
         // Recupera todos los usuarios con relaciones incluidas
-        //$users = User::included()->get();
+        // $users = User::included()->get();
 
         // Aplica filtros si están definidos en la query y vuelve a obtener usuarios
         $users = User::included()->filter()->get();
